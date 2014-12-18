@@ -1,0 +1,110 @@
+Mumoro: MUltiModal MUltiObjective ROuting
+
+
+
+
+== Requirements ==
+On ubuntu or debian, please install the developpment versions
+* GCC: C++ compiler (others aren't tested)
+* Boost: used for the graph structures, serialization and heaps
+* Python2 (no support for python3 is provided)
+* Swig: for interfacing python with C++
+
+
+=== Installing Python Dependencies ===
+
+Python dependencies can be install by running:
+
+`sudo easy_install sqlalchemy cherrypy genshi transitfeed`
+
+Make sure the packages were installed for python2 (you might need to use `easy_install-2.7` instead).
+Note for Mac OSX users: the gnuport python2-7 is fine if you use easy_install-2.7
+
+=== osm4routing ===
+
+For importing data from OSM files, this project uses osm4routing.
+Some modifications were brought to osm4routing to support:
+ 
+ * Importing data from multiple OSM files
+ * Use of the `maxspeed` key when defining  the maximum speed on a road segment
+
+Make sure you have an osm4routing coming from our repository ( https://github.com/athy/osm4routing ) installed.
+You can fetch it with git, explanations on how to install it are provided in the README.
+ 
+```
+git clone https://github.com/athy/osm4routing.git
+```
+
+Installation is basically: `sudo python2 setup.py install`
+
+== Project layout ==
+
+MuMoRo is composed of three parts
+
+- Core : A C++ core that contains mainly the graph structure. This part is in lib/core
+- Algorithms : C++ implementation of various routing algorithms
+- Frontend : A python part that is mainly used to import data and run a web service to have a basic UI. It uses SWIG to interface with the C++ code
+
+
+== Building with CMake ==
+
+The C++ code can be built with a standard CMake build : 
+
+```
+mkdir build
+cd build/
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make 
+```
+
+The default target is an executable based on algorithms/main.cpp. To build the swig interface, run `make swig`. 
+This will generate a shared library (_mumoro.so) and a python interface (mumoro.py) that will be automatically copied in lib/core/
+
+
+== Running ==
+
+Running MuMoro requires a configuration (aka scenario). Some example are present in the `scenarios/` folder. 
+Those allow to define which data (OSM or GTFS) will be used for building the multi-modal graph.
+
+A scenario folder whould contain a `conf.py` file that contains the configuration.
+Look at the toulouse folder in scenarios/ for an example.
+
+For the rest of this README, we will stick to the toulouse example that is provided
+
+=== Importing data ===
+
+First step is to load data into your database. This is done by running: 
+
+`python2 data_import.py scenarios/toulouse/`
+
+NOTE : the `/` at the end of the path _is_ compulsory.
+
+
+After this step, a database was created and populated with nodes and edges extracted from the OSM and GTFS instances.
+This is typically (although it can be changed in the configuration) a `sqlite.db` file sitting in the configuration directory.
+
+
+=== Building the graph ===
+
+In this step a multi-modal graph is constructed from the database. 
+It is saved to an archive (either portable text or machine-specific binary).
+
+`python2 build_graph.py scenarios/toulouse/`
+
+At the end of this step, you should have to archives sitting in your configuration directory:
+ 
+ - graph.bin-dump (binary archive)
+ - graph.txt-dump (text artchive)
+
+Those contain the whole graph and can be used to load it quickly into memory.
+
+=== Running the server ===
+
+Once the graph is built, next step is to run the server.
+If ran for the first time the graph will be generated from database and serilalized in a .dump file. 
+This file will be used for subsequent loading as long as the scenario is not changed.
+
+`python2 server.py scenarios/toulouse/`
+
+Interface is then accessible on http://localhost:3001/ (or whatever url defined in the configuration).
+
