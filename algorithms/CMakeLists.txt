@@ -24,7 +24,7 @@ add_subdirectory( Interface )
 # Share the following variables with parent directory
 set( SWIG_SOURCES ${SWIG_SOURCES} PARENT_SCOPE )
 set( SOURCES ${SOURCES} PARENT_SCOPE )
-set( MAIN_EXE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Test_010.cpp PARENT_SCOPE )
+set( MAIN_EXE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/psi.cpp PARENT_SCOPE )
 set( ALGO_INC_DIRS ${ALGO_INC_DIRS} PARENT_SCOPE )
 
 

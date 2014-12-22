@@ -86,11 +86,12 @@ void init_car_sharing(T * cs, const Transport::Graph* trans, int src_ped, int sr
     cs->graphs.push_back( g3 );
     cs->graphs.push_back( g4 );
     cs->graphs.push_back( g5 );
+    
     cs->dij.push_back( new typename T::Dijkstra( typename T::Dijkstra::ParamType(RLC::DRegLCParams(g1, day, 1)) ) );
     cs->dij.push_back( new typename T::Dijkstra( typename T::Dijkstra::ParamType(RLC::DRegLCParams(g2, day, 1)) ) );
     cs->dij.push_back( new typename T::Dijkstra( typename T::Dijkstra::ParamType(RLC::DRegLCParams(g3, day, 2)) ) );
     cs->dij.push_back( new typename T::Dijkstra( typename T::Dijkstra::ParamType(RLC::DRegLCParams(g4, day, 1)) ) );
-//     cs->dij.push_back( new typename T::Dijkstra( typename T::Dijkstra::ParamType(RLC::DRegLCParams(g5, day, 1)) ) );
+//  cs->dij.push_back( new typename T::Dijkstra( typename T::Dijkstra::ParamType(RLC::DRegLCParams(g5, day, 1)) ) );
     cs->dij.push_back( new RLC::Martins(g5, dest_ped, day) );
     
     cs->insert( StateFreeNode(0, src_ped), time, 0);
@@ -292,6 +293,61 @@ void init_multi_car_sharing_with_areas(T * cs, const Transport::Graph* trans, in
     */
     cs->dij.push_back( new RLC::Martins(g5, dest_ped, day, area_dest) );
     
+    cs->insert( StateFreeNode(0, src_ped), time, 0);
+    cs->insert( StateFreeNode(1, src_car), time, 0);
+    cs->insert( StateFreeNode(3, dest_car), 0, 0);
+}
+
+
+template<typename T>
+void init_car_sharing_with_limit(T * cs, const Transport::Graph* trans, int src_ped, int src_car, int dest_ped, 
+                 int dest_car, RLC::DFA dfa_ped, RLC::DFA dfa_car, int limit_a, int limit_b )
+{
+    
+    typedef RLC::AspectMaxCostPruning<RLC::AspectMinCost<DRegLC> > LimitDij;
+    
+    cs->vres.a_nodes.push_back(src_ped);
+    cs->vres.a_nodes.push_back(src_car);
+    cs->vres.b_nodes.push_back(dest_ped);
+    cs->vres.b_nodes.push_back(dest_car);
+    
+    int day = 10;
+    int time = 0;
+    
+    RLC::Graph *g1 = new RLC::Graph(cs->transport, dfa_ped );
+    RLC::Graph *g2 = new RLC::Graph(cs->transport, dfa_car );
+    RLC::Graph *g3 = new RLC::Graph(cs->transport, dfa_car );
+    RLC::BackwardGraph *g4 = new RLC::BackwardGraph(g2);
+    RLC::Graph *g5 = new RLC::Graph(cs->transport, dfa_ped );
+    
+    cs->graphs.push_back( g1 );
+    cs->graphs.push_back( g2 );
+    cs->graphs.push_back( g3 );
+    cs->graphs.push_back( g4 );
+    cs->graphs.push_back( g5 );
+    
+   
+    
+    cs->dij.push_back( new LimitDij( 
+        LimitDij::ParamType(
+            RLC::DRegLCParams(g1, day, 1),
+            RLC::AspectMaxCostPruningParams( limit_a ) ) ) );
+    
+    cs->dij.push_back( new LimitDij( 
+        LimitDij::ParamType(
+            RLC::DRegLCParams(g2, day, 1),
+            RLC::AspectMaxCostPruningParams( limit_b ) ) ) );
+    
+    cs->dij.push_back( new typename T::Dijkstra( typename T::Dijkstra::ParamType(RLC::DRegLCParams(g3, day, 2)) ) );
+    
+    cs->dij.push_back( new LimitDij( 
+        LimitDij::ParamType(
+            RLC::DRegLCParams(g4, day, 1),
+            RLC::AspectMaxCostPruningParams( limit_b ) ) ) );
+    
+    cs->dij.push_back( new RLC::Martins(g5, dest_ped, day) );
+   
+        
     cs->insert( StateFreeNode(0, src_ped), time, 0);
     cs->insert( StateFreeNode(1, src_car), time, 0);
     cs->insert( StateFreeNode(3, dest_car), 0, 0);

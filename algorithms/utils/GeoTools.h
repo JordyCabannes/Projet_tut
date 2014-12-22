@@ -34,7 +34,7 @@ bool proximity(float lon1, float lat1, float lon2, float lat2,double radius){
 
 bool verboseproximity(float lon1, float lat1, float lon2, float lat2,double radius){
   
-  cout<<"la distance est: "<<haversine_dist(lon1,lat1,lon2,lat2)<<" ";
+  //cout<<"la distance est: "<<haversine_dist(lon1,lat1,lon2,lat2)<<" ";
   
   return (haversine_dist(lon1,lat1,lon2,lat2)<=radius);
 }
