@@ -81,11 +81,11 @@ struct Label {
    //return (cost >= other.cost && time >= other.time);
     //return (cost >= other.cost) && (cost - other.cost <= other.time - time);
     
-    //bool heuristik_rules= ((other.time<=time)&&(other.cost<=cost));
+    bool heuristik_rules= ((other.time<=time)&&(other.cost<=cost));
     
-    bool exact_rules=((other.time <=time) && ((other.cost-cost)<=(other.time-time)));
+    //bool exact_rules=((other.time <=time) && ((other.cost-cost)<=(other.time-time)));
     
-    return exact_rules;
+    return heuristik_rules;
     
       
   }

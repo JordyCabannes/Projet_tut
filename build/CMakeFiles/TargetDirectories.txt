@@ -1,0 +1,3 @@
+/vagrant/dev/krog/build/CMakeFiles/_mumoro.dir
+/vagrant/dev/krog/build/CMakeFiles/main-exe.dir
+/vagrant/dev/krog/build/CMakeFiles/swig.dir

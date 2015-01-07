@@ -1501,28 +1501,31 @@ class Toolbox{
     fout.open (fileName, ofstream::out | ofstream::app);
     
     fout << "scenario_id" <<';';
-    
-    fout<< "iso_foot_pickup_time"<<';'<<"pickup_foot_size"<<';'<<"iso_car_pickup_time"<<';'<<"pickup_car_size"<<';';
-    
+    fout << "iso_foot_pickup_time"<<';'<<"pickup_foot_size"<<';'<<"iso_car_pickup_time"<<';'<<"pickup_car_size"<<';';  
     fout << "iso_foot_dropoff_time" <<';'<< "dropoff_foot_size"<<';'<<"iso_car_dropoff_time"<<';'<<"dropoff_car_size"<<';';
-    
     fout << "psi_pickup_time" <<';'<< "psi_pickup_size"<<';'<<"psi_dropoff_time"<<';'<<"psi_dropoff_size"<<';';
-    
     fout << "path_computing_time" <<';'<< "shared_path_size"<<';'<<"path_ordering_foot_time"<<';'<<"path_ordering_car_time"<<';';
+
     
     fout << "cd_total_cost"<<';'<< "cc_total_cost"<<';'<<"ecart_cost"<<';'<<"diff_cost"<<';';
+    fout << "cd_total_cost"<<';'<< "ccl_total_cost"<<';'<<"ecart_cost_2"<<';'<<"diff_cost_2"<<';';
+
     
-    fout<<"ecart_distance_pickup (meters)"<<';'<<"ecart_distance_dropoff (meters)"<<';';
+    fout << "ecart_distance_pickup (meters)"<<';'<<"ecart_distance_dropoff (meters)"<<';';
+    fout << "ecart_distance_pickup_2 (meters)"<<';'<<"ecart_distance_dropoff_2 (meters)"<<';';
+
     
-    fout<< "cd_len1"<<';'<<"cc_len1"<<';'<<"cd_len2"<<';'<<"cc_len2"<<';'<< "cd_len3"<<';'<<"cc_len3"<<';';
-    
-    fout<< "cd_len4"<<';'<<"cc_len4"<<';'<<"cd_len5"<<';'<<"cc_len5"<<';';
+    fout << "cd_len1"<<';'<<"cd_len2"<<';'<<"cd_len3"<<';'<<"cd_len4"<<';'<<"cd_len5"<<';';
+    fout << "cc_len1"<<';'<<"cc_len2"<<';'<<"cc_len3"<<';'<<"cc_len4"<<';'<<"cc_len5"<<';';
+    fout << "ccl_len1"<<';'<<"ccl_len2"<<';'<<"ccl_len3"<<';'<<"ccl_len4"<<';'<<"ccl_len5"<<';';
+
     
     fout<< "foot1"<<';'<<"car1"<<';'<<"foot2"<<';'<<"car2"<<';';
+
     
-    fout<< "cd_waiting_time"<<';'<<"cd_waiting_time"<<';'<<"diff_waiting_time"<<';';
-    
-    fout << "cd_total_cost"<<';'<< "ccl_total_cost"<<';'<<"ecart_cost_2"<<';'<<"diff_cost_2"<<';';
+    fout<< "cd_waiting_time"<<';'<<"cc_waiting_time"<<';'<<"ecart_waiting_time"<<';';  
+    fout<< "cd_waiting_time"<<';'<<"ccl_waiting_time"<<';'<<"ecart_waiting_time_2"<<';';
+
 
     fout << "cc_runtime"<<';'<<"ccl_runtime"<<'\n';
     
@@ -1537,37 +1540,48 @@ class Toolbox{
     
     Node pick2=g->mapNode(output.cc_pickup);
     Node drop2=g->mapNode(output.cc_dropoff);
+
+    Node pick3=g->mapNode(output.ccl_pickup);
+    Node drop3=g->mapNode(output.ccl_dropoff);
     
-    double d_pickup=haversine_dist(pick.lon,pick.lat, pick2.lon,pick2.lat);
-    double d_dropoff=haversine_dist(drop.lon,drop.lat, drop2.lon,drop2.lat);
+    double d_pickup=haversine_dist(pick.lon, pick.lat, pick2.lon, pick2.lat);
+    double d_dropoff=haversine_dist(drop.lon, drop.lat, drop2.lon, drop2.lat);
+
+    double d_pickup_2=haversine_dist(pick.lon, pick.lat, pick3.lon, pick3.lat);
+    double d_dropoff_2=haversine_dist(drop.lon, drop.lat, drop3.lon, drop3.lat);
     
     ofstream fout;
    
     fout.open (fileName, ofstream::out | ofstream::app);
     
     fout <<output.scenario_id <<';';
-    
     fout<< output.iso_foot_pickup_time <<';'<<output.pickup_foot_size<<';'<<output.iso_car_pickup_time<<';' <<output.pickup_car_size<<';';
-    
-    fout<< output.iso_foot_dropoff_time <<';'<<output.dropoff_foot_size<<';'<<output.iso_car_dropoff_time<<';' <<output.dropoff_car_size<<';';
-    
-    fout<< output.psi_pickup_time <<';'<<output.psi_pickup_size<<';'<<output.psi_dropoff_time<<';' <<output.psi_dropoff_size<<';';
-    
+    fout<< output.iso_foot_dropoff_time <<';'<<output.dropoff_foot_size<<';'<<output.iso_car_dropoff_time<<';' <<output.dropoff_car_size<<';';   
+    fout<< output.psi_pickup_time <<';'<<output.psi_pickup_size<<';'<<output.psi_dropoff_time<<';' <<output.psi_dropoff_size<<';';   
     fout<< output.path_computing_time <<';'<<output.shared_path_size<<';'<<output.path_ordering_foot_time<<';' <<output.path_ordering_car_time<<';';
     
-    fout<< output.cd_costs.total_cost<<';'<< output.cc_costs.total_cost <<';'<< abs(output.cd_costs.total_cost-output.cc_costs.total_cost) <<';'<<(output.cd_costs.total_cost-output.cc_costs.total_cost)<<';';
+
+    
+    fout<< output.cd_costs.total_cost<<';'<< output.cc_costs.total_cost <<';'<< abs(output.cd_costs.total_cost-output.cc_costs.total_cost) <<';'<<(output.cd_costs.total_cost-output.cc_costs.total_cost)<<';';  
+    fout<< output.cd_costs.total_cost<<';'<< output.ccl_costs.total_cost <<';'<< abs(output.cd_costs.total_cost-output.ccl_costs.total_cost) <<';'<<(output.cd_costs.total_cost-output.ccl_costs.total_cost)<<';';
+
+
     
     fout<<d_pickup<<';'<<d_dropoff<<';';
+    fout<<d_pickup_2<<';'<<d_dropoff_2<<';';
+
+
     
-    fout<< output.cd_costs.len_foot_pickup<<';'<<output.cc_costs.len_foot_pickup<<';'<<output.cd_costs.len_car_pickup<<';'<<output.cc_costs.len_car_pickup<<';'<< output.cd_costs.len_shared_path<<';'<<output.cc_costs.len_shared_path<<';';
-    
-    fout<< output.cd_costs.len_foot_dropoff<<';'<<output.cc_costs.len_foot_dropoff<<';'<<output.cd_costs.len_car_dropoff<<';'<<output.cc_costs.len_car_dropoff<<';';
+    fout << output.cd_costs.len_foot_pickup<<';'<<output.cd_costs.len_car_pickup<<';'<<output.cd_costs.len_shared_path<<';'<<output.cd_costs.len_foot_dropoff<<';'<<output.cd_costs.len_car_dropoff<<';';
+    fout << output.cc_costs.len_foot_pickup<<';'<<output.cc_costs.len_car_pickup<<';'<<output.cc_costs.len_shared_path<<';'<<output.cc_costs.len_foot_dropoff<<';'<<output.cc_costs.len_car_dropoff<<';';
+    fout << output.ccl_costs.len_foot_pickup<<';'<<output.ccl_costs.len_car_pickup<<';'<<output.ccl_costs.len_shared_path<<';'<<output.ccl_costs.len_foot_dropoff<<';'<<output.ccl_costs.len_car_dropoff<<';';
+
     
     fout<< output.foot_start<<';'<<output.car_start<<';'<<output.foot_end<<';'<<output.car_end<<';';
+
     
-    fout<< output.cd_costs.wait_time<<';'<<output.cc_costs.wait_time<<';'<<output.cd_costs.wait_time - output.cc_costs.wait_time<<';';
-    
-    fout<< output.cd_costs.total_cost<<';'<< output.ccl_costs.total_cost <<';'<< abs(output.cd_costs.total_cost-output.ccl_costs.total_cost) <<';'<<(output.cd_costs.total_cost-output.ccl_costs.total_cost)<<';';
+    fout<< output.cd_costs.wait_time<<';'<<output.cc_costs.wait_time<<';'<<abs(output.cd_costs.wait_time - output.cc_costs.wait_time)<<';';
+    fout<< output.cd_costs.wait_time<<';'<<output.ccl_costs.wait_time<<';'<<abs(output.cd_costs.wait_time - output.ccl_costs.wait_time)<<';';
 
     
     fout << output.cc_time<<';'<<output.ccl_time<<'\n';
