@@ -36,9 +36,11 @@ def run_test(filename):
 	tcf=tb.test_loader(filename)
 	tb.create_result_file("output.csv")
 	k=0
+	compt=0
 
 	while (k<tcf.number_of_scenarios):
 	  
+	  print compt
 	  print "################### Scenario ", k, "################################"
 	  synchro_1=tb.synchro(g)
 	  synchro_2=tb.get_satellite(tb.satellites(synchro_1,tcf.synchro2_a,tcf.synchro2_b,g))
@@ -110,6 +112,7 @@ def run_test(filename):
 
 	  if(m.shared_path_len()>0):
 	        
+	    compt=compt+1
 	    time_taken_pickup, result_pickup = timer(run_psi_2_round_elgamal, pickup_driver_set, pickup_pedestrian_set)
 	    print time_taken_pickup, len(result_pickup)
 	    output.psi_pickup_time=str(time_taken_pickup)
